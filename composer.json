@@ -1,0 +1,21 @@
+{
+    "name": "osynapsy/geocoding",
+    "description": "Geocoding module for Osynapsy framework",
+    "type": "library",
+    "version": "1.0",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Osynapsy\\Geocoding\\": "src/Geocoding/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pietro Celeste",
+            "email": "p.celeste@osynapsy.net"
+        }
+    ]
+}
