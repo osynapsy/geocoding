@@ -3,12 +3,17 @@ namespace Osynapsy\Geocoding\Provider;
 
 use Osynapsy\Geocoding\Location;
 
-class LocationIq implements ProviderInterface
+/**
+ * Description of Here
+ *
+ * @author Pietro Celeste <p.celeste@osynapsy.net>
+ */
+class Here implements ProviderInterface
 {
     private string $apiKey;
     private string $endpoint;
 
-    public function __construct(string $apiKey, string $endpoint = 'https://us1.locationiq.com/v1/search.php')
+    public function __construct(string $apiKey, string $endpoint = 'https://geocode.search.hereapi.com/v1/geocode')
     {
         $this->apiKey = $apiKey;
         $this->endpoint = $endpoint;
@@ -16,29 +21,29 @@ class LocationIq implements ProviderInterface
 
     public function getCoordinates(string $address): ?Location
     {
-        $url = sprintf('%s?key=%s&q=%s&format=json',
+        $url = sprintf('%s?q=%s&apiKey=%s',
             $this->endpoint,
-            urlencode($this->apiKey),
-            urlencode($address)
+            urlencode($address),
+            urlencode($this->apiKey)
         );
 
         $opts = ["http" => ["header" => "User-Agent: Osynapsy-Geocoder/1.0\r\n"]];
         $context = stream_context_create($opts);
-        $response = @file_get_contents($url, false, $context);
+        $response = file_get_contents($url, false, $context);
 
         if ($response === false) {
             return null;
         }
 
         $data = json_decode($response, true);
-        if (!is_array($data) || empty($data[0]['lat']) || empty($data[0]['lon'])) {
+        if (empty($data['items'][0]['position']['lat']) || empty($data['items'][0]['position']['lng'])) {
             return null;
         }
 
         return new Location(
-            (float) $data[0]['lat'],
-            (float) $data[0]['lon'],
-            'locationiq'
+            (float) $data['items'][0]['position']['lat'],
+            (float) $data['items'][0]['position']['lng'],
+            'here'
         );
     }
 }
